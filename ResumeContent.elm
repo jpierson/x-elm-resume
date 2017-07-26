@@ -1,30 +1,9 @@
 module ResumeContent exposing (..)
 
+import ResumeData exposing (..)
 import Html exposing (text, body, div, h1, h3, a, p, i, span, section, h5, br, hr, node)
 import Html.Attributes exposing (class, id, href, name)
-
-
-sm : List (Html.Attribute msg) -> List (Html.Html msg) -> Html.Html msg
-sm =
-    node "sm"
-
-t : List (Html.Attribute msg) -> List (Html.Html msg) -> Html.Html msg
-t =
-    node "t"
-
-imp : List (Html.Attribute msg) -> List (Html.Html msg) -> Html.Html msg
-imp =
-    node "imp"
-
-more : List (Html.Attribute msg) -> List (Html.Html msg) -> Html.Html msg
-more =
-    node "more"
-
-type alias ResumeData =
-  { name : String
-  , email : String
-  }
-
+import Html.Knommon exposing (..)
 
 header : ResumeData -> Html.Html msg
 header resumeData =
