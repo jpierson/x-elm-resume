@@ -16,7 +16,7 @@ header resumeData =
                 [ div [ class "col-lg-12" ]
                     [ h1 [] [ text resumeData.name ]
                     , h3 []
-                        [ text "What you do | "
+                        [ text <| resumeData.label ++ " | "
                         , a [ href ("mailto:" ++ resumeData.email) ] [ text resumeData.email ]
                         ]
                     ]
@@ -35,7 +35,7 @@ aboutDiv resumeData =
                     ]
                 , div [ class "col-lg-6" ]
                     [ p []
-                        [ text "This is a short description of who you are. Keep it to about 3 sentences and make sure to highlight the key points about you. What makes you stand out as an applicant?" ]
+                        [ text resumeData.summary ]
                     ]
                 , div [ class "col-lg-3" ]
                     [ p []

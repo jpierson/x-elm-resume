@@ -5,8 +5,11 @@ import ResumeContent exposing (resume)
 import ResumeData exposing (..)
 
 myData : ResumeData 
-myData = ResumeData "Jeff Pierson" "jeff@beyondfold.com"
+myData = ResumeData 
+    "Your Name" 
+    "You@Email.com"
+    "What you do"
+    "This is a short description of who you are. Keep it to about 3 sentences and make sure to highlight the key points about you. What makes you stand out as an applicant?"
 
 main : Html.Html msg
 main = resume myData
-   
