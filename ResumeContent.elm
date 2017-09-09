@@ -51,115 +51,96 @@ aboutDiv resumeData =
             ]
         ]
 
+educationRow : EducationData -> Bool -> List (Html.Html msg)
+educationRow educationData isFirstRow =
+    [
+        div [ class "col-lg-2 col-lg-offset-1" ]
+            [ h5 []
+                -- HACK: I use a conditional here so that it is easier to treat
+                -- the fist row different than subsequent ones but preserving
+                -- the original class based layout differently altogether for
+                -- the first row would be more desireable to stay true to the
+                -- original author's example.
+                (if isFirstRow  then 
+                    [ text "EDUCATION" ] 
+                else 
+                    [ text "" ])
+            ]
+        , div [ class "col-lg-6" ]
+            [ p []
+                [ t []
+                    [ text educationData.achievement ]
+                , br [] []
+                , text educationData.institution
+                ]
+            ]
+        , div [ class "col-lg-3" ]
+            [ p []
+                [ sm []
+                    [ text educationData.endDate ]
+                , br []
+                    []
+                , imp []
+                    [ sm []
+                        [ text "IN PROGRESS" ]
+                    ]
+                ]
+            ]
+    ]
+
 educationDiv : ResumeData -> Html.Html msg
 educationDiv resumeData = 
     div [ class "container desc" ]
         [ div [ class "row" ]
-            [ div [ class "col-lg-2 col-lg-offset-1" ]
-                [ h5 []
-                    [ text "EDUCATION" ]
-                ]
-            , div [ class "col-lg-6" ]
-                [ p []
-                    [ t []
-                        [ text "Bachelor of Awesomeness" ]
-                    , br [] []
-                    , text "University of Maryland"
-                    ]
-                ]
-            , div [ class "col-lg-3" ]
-                [ p []
-                    [ sm []
-                        [ text "Expected SPRING 2015" ]
-                    , br []
-                        []
-                    , imp []
-                        [ sm []
-                            [ text "IN PROGRESS" ]
-                        ]
-                    ]
-                ]
-            , div [ class "col-lg-6 col-lg-offset-3" ]
-                [ p []
-                    [ t []
-                        [ text "Associate of Degrees" ]
-                    , br [] []
-                    , text "Lil 'ol College"
-                    ]
-                ]
-            , div [ class "col-lg-3" ]
-                [ p []
-                    [ sm []
-                        [ text "JUNE 2012" ]
-                    ]
-                ]
-            ]
+            (List.concat (List.indexedMap (\i data -> educationRow data (i == 0)) resumeData.education))
         , br []
             []
         , hr []
             []
         ]
 
+workRow : WorkData -> Bool -> List (Html.Html msg)
+workRow workData isFirstRow =
+    [ 
+    div [ class "col-lg-2 col-lg-offset-1" ]
+        [ h5 []
+            [ text "WORK" ] 
+        ]
+    , div [ class (if isFirstRow then "col-lg-6" else "col-lg-6 col-lg-offset-3") ]
+        [ p [ class "tight" ]
+            [ t []
+                [ text workData.position ]
+            , br [] []
+            , text workData.name
+            , br []
+                []
+            ]
+        , p []
+            [ more []
+                [ text workData.summary ]
+            ]
+        ]
+    , div [ class "col-lg-3" ]
+        [ p []
+            [ sm []
+                [ text <| workData.startDate ++ " - " ++ workData.endDate
+                    , br [] []
+                    , text (String.join ", " (List.filterMap identity [ Just workData.location.city, workData.location.state, Just workData.location.country ]))
+                ]
+            ]
+        ]
+    ]
+    |> (if not isFirstRow then List.drop 1 else identity)
+
 workDiv : ResumeData -> Html.Html msg
 workDiv resumeData =
     div [ class "container desc" ]
         [ div [ class "row" ]
-            [ div [ class "col-lg-2 col-lg-offset-1" ]
-                [ h5 []
-                    [ text "WORK" ]
-                ]
-            , div [ class "col-lg-6" ]
-                [ p [ class "tight" ]
-                    [ t []
-                        [ text "Position" ]
-                    , br [] []
-                    , text "Thatone Corp."
-                    , br []
-                        []
-                    ]
-                , p []
-                    [ more []
-                        [ text "Here's where you put a description of the position you held. Responsibilities, accomplishments - the same as you would do on a standard paper resume, but this will be online and look cooler." ]
-                    ]
-                ]
-            , div [ class "col-lg-3" ]
-                [ p []
-                    [ sm []
-                        [ text "AUGUST 2012 - CURRENT"
-                            , br [] []
-                            , text "CITY, STATE, COUNTRY"
-                        ]
-                    ]
-                ]
-            , div [ class "col-lg-6 col-lg-offset-3" ]
-                [ p [ class "tight" ]
-                    [ t []
-                        [ text "Previous Position" ]
-                    , br [] []
-                    , text "Another Organization Ltd."
-                    , br []
-                        []
-                    ]
-                , p []
-                    [ more []
-                        [ text "You worked at another job! Great! Describe waht you did there, include those responsibilities and accomplishments again." ]
-                    ]
-                ]
-            , div [ class "col-lg-3" ]
-                [ p []
-                    [ sm []
-                        [ text "JUNE 2010 - JULY 2012"
-                        , br [] []
-                        , text "GOTHAM CITY, USA"
-                        ]
-                    ]
-                ]
-            ]
-        , br []
-            []
-        , hr []
-            []
+            (List.concat (List.indexedMap (\i data -> workRow data (i == 0)) resumeData.work))
+        , br [] []
+        , hr [] []
         ]
+
 
 awardsDiv : ResumeData -> Html.Html msg
 awardsDiv resumeData =
