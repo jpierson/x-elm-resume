@@ -9,8 +9,19 @@ myData : ResumeData
 myData = ResumeData 
     "Your Name" 
     "You@Email.com"
+    "(234) 567-8901"
     "What you do"
     "This is a short description of who you are. Keep it to about 3 sentences and make sure to highlight the key points about you. What makes you stand out as an applicant?"
+    (Location 
+        "123 Some St."
+        "State 01234"
+        "City"
+        "US"
+        "State  ")
+    [ Profile "Dribbble" "" "#"
+    , Profile "Twitter" "" "#"
+    , Profile "Facebook" "" "#"
+    , Profile "LinkedIn" "" "#" ]
     [ EducationData "University of Maryland" "Bachelor of Awesomeness" "EXPECTED SPRING 2015" 
     , EducationData "Lil 'ol College" "Associate of Degrees" "JUNE 2012"] 
     [ WorkData 

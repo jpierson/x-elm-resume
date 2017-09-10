@@ -4,6 +4,8 @@ import ResumeData exposing (..)
 import Html exposing (text, body, div, h1, h3, a, p, i, span, section, h5, br, hr, node)
 import Html.Attributes exposing (class, id, href, name)
 import Html.Knommon exposing (..)
+import Char exposing (..)
+import Countries exposing (fromCode)
 
 header : ResumeData -> Html.Html msg
 header resumeData =
@@ -188,6 +190,78 @@ awardsDiv resumeData =
             []
         ]
 
+socialNetworkIconClass : String -> String
+socialNetworkIconClass networkName =
+    case String.toLower networkName of
+    "twitter" -> "icon-twitter"
+    s -> "icon-" ++ s
+
+socialNetworkItem : Profile -> Html.Html msg
+socialNetworkItem profile =
+    a [ href profile.url ]
+        [ i [ class <| socialNetworkIconClass <| profile.network ]
+            []
+        ]
+
+footer : ResumeData -> Html.Html msg
+footer resumeData =
+    div [ id "footwrap", class "footer" ]
+        [ div [ class "container" ]
+            [ div [ class "row" ]
+                [ div [ class "col-lg-2 col-lg-offset-1" ]
+                    [ h5 []
+                        [ text "CONTACT" ]
+                    ]
+                , div [ class "col-lg-6" ]
+                    [ p []
+                        [ t []
+                            [ text "Email" ]
+                        , br []
+                            []
+                        , a [ href ("mailto:" ++ resumeData.email), class "mail" ]
+                            [ text resumeData.email ]
+                        , br []
+                            []
+                        ]
+                    , p []
+                        [ t []
+                            [ text "Address" ]
+                        , br [] [] 
+                        , text resumeData.location.address
+                        , br [] []
+                        , text (resumeData.location.city ++ ", " ++ resumeData.location.postalCode)
+                        , br [] []
+                        , text <|
+                            case Countries.fromCode resumeData.location.countryCode of 
+                                Just country -> country.name
+                                Nothing -> resumeData.location.countryCode
+                        , br []
+                            []
+                        ]
+                    , p []
+                        [ t []
+                            [ text "Phone" ]
+                        , br []
+                            []
+                        , a [ href ("tel:" ++ (toString (String.filter (\c -> Char.isDigit c) resumeData.phone))), class "tel" ]
+                            [ text resumeData.phone ]
+                        , br []
+                            []
+                        ]
+                    ]
+                , div [ class "col-lg-3" ]
+                    [ p []
+                        [ sm []
+                            [ text "SOCIAL LINKS" ]
+                        ]
+                    , p []
+                        (List.map (\p -> socialNetworkItem p) resumeData.profiles)
+                    ]
+                ]
+            ]
+        ]
+
+
 resume : ResumeData -> Html.Html msg
 resume resumeData = 
     body []
@@ -199,72 +273,5 @@ resume resumeData =
         , workDiv resumeData
         , awardsDiv resumeData
         , section [ id "contact", name "contact" ] []
-        , div [ id "footwrap", class "footer" ]
-            [ div [ class "container" ]
-                [ div [ class "row" ]
-                    [ div [ class "col-lg-2 col-lg-offset-1" ]
-                        [ h5 []
-                            [ text "CONTACT" ]
-                        ]
-                    , div [ class "col-lg-6" ]
-                        [ p []
-                            [ t []
-                                [ text "Email" ]
-                            , br []
-                                []
-                            , a [ href ("mailto:" ++ resumeData.email), class "mail" ]
-                                [ text resumeData.email ]
-                            , br []
-                                []
-                            ]
-                        , p []
-                            [ t []
-                                [ text "Address" ]
-                            , br [] [] 
-                            , text "123 Some St." 
-                            , br [] []
-                            , text "City, State 01234" 
-                            , br [] []
-                            , text "United States of America" 
-                            , br []
-                                []
-                            ]
-                        , p []
-                            [ t []
-                                [ text "Phone" ]
-                            , br []
-                                []
-                            , a [ href "tel:2345678901", class "tel" ]
-                                [ text "(234) 567-8901" ]
-                            , br []
-                                []
-                            ]
-                        ]
-                    , div [ class "col-lg-3" ]
-                        [ p []
-                            [ sm []
-                                [ text "SOCIAL LINKS" ]
-                            ]
-                        , p []
-                            [ a [ href "#" ]
-                                [ i [ class "icon-dribbble" ]
-                                    []
-                                ]
-                            , a [ href "#" ]
-                                [ i [ class "icon-twitter" ]
-                                    []
-                                ]
-                            , a [ href "#" ]
-                                [ i [ class "icon-facebook" ]
-                                    []
-                                ]
-                            , a [ href "#" ]
-                                [ i [ class "icon-linkedin" ]
-                                    []
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-    ]
+        , footer resumeData
+        ]
