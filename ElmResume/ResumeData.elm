@@ -1,4 +1,4 @@
-module ResumeData exposing (..)
+module ElmResume.ResumeData exposing (..)
 
 
 

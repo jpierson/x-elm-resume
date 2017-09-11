@@ -1,4 +1,4 @@
-module Html.Knommon exposing (..)
+module ElmResume.Views.Html.Knommon exposing (..)
 
 import Html exposing (node)
 

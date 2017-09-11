@@ -1,8 +1,8 @@
 module Index exposing (..)
 
 import Html exposing (Html)
-import ResumeContent exposing (resume)
-import ResumeData exposing (..)
+import ElmResume.Views.ResumeContent exposing (resume)
+import ElmResume.ResumeData exposing (..)
 
 
 myData : ResumeData 

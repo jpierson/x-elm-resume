@@ -1,9 +1,9 @@
-module ResumeContent exposing (..)
+module ElmResume.Views.ResumeContent exposing (resume)
 
-import ResumeData exposing (..)
+import ElmResume.ResumeData exposing (..)
 import Html exposing (text, body, div, h1, h3, a, p, i, span, section, h5, br, hr, node)
 import Html.Attributes exposing (class, id, href, name)
-import Html.Knommon exposing (..)
+import ElmResume.Views.Html.Knommon exposing (..)
 import Char exposing (..)
 import Countries exposing (fromCode)
 
