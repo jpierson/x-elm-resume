@@ -6,6 +6,7 @@ import Html.Attributes exposing (class, id, href, name)
 import ElmResume.Views.Html.Knommon exposing (..)
 import Char exposing (..)
 import Countries exposing (fromCode)
+import Maybe.FlatMap exposing (flatMap)
 
 type alias ResumeData = JsonResume
 
@@ -20,9 +21,9 @@ header resumeData =
                 [ div [ class "col-lg-12" ]
                     [ h1 [] [ text <| Maybe.withDefault "" resumeData.name ]
                     , h3 []
-                        (List.intersperse (text " | ") 
-                            (List.filterMap 
-                                identity 
+                        (List.intersperse (text " | ")
+                            (List.filterMap
+                                identity
                                 [ Just <| text <| Maybe.withDefault "" resumeData.label
                                 , Maybe.map (\ email -> a [ href ("mailto:" ++ email) ] [ text email ]) resumeData.email
                                 ]))
@@ -68,9 +69,9 @@ educationRow educationData isFirstRow =
                 -- the original class based layout differently altogether for
                 -- the first row would be more desireable to stay true to the
                 -- original author's example.
-                (if isFirstRow  then 
-                    [ text "EDUCATION" ] 
-                else 
+                (if isFirstRow  then
+                    [ text "EDUCATION" ]
+                else
                     [ text "" ])
             ]
         , div [ class "col-lg-6" ]
@@ -96,7 +97,7 @@ educationRow educationData isFirstRow =
     ]
 
 educationDiv : ResumeData -> Html.Html msg
-educationDiv resumeData = 
+educationDiv resumeData =
     div [ class "container desc" ]
         [ div [ class "row" ]
             (List.concat (List.indexedMap (\i data -> educationRow data (i == 0)) resumeData.education))
@@ -108,10 +109,10 @@ educationDiv resumeData =
 
 workRow : WorkData -> Bool -> List (Html.Html msg)
 workRow workData isFirstRow =
-    [ 
+    [
     div [ class "col-lg-2 col-lg-offset-1" ]
         [ h5 []
-            [ text "WORK" ] 
+            [ text "WORK" ]
         ]
     , div [ class (if isFirstRow then "col-lg-6" else "col-lg-6 col-lg-offset-3") ]
         [ p [ class "tight" ]
@@ -129,12 +130,12 @@ workRow workData isFirstRow =
         ]
     , div [ class "col-lg-3" ]
         [ p []
-            [ sm [] 
+            [ sm []
                 (
                     [ Maybe.Just ( text "")
                     -- [ Maybe.Just ( text ( [ workData.startDate, workData.endDate ] |> List.filterMap identity |> List.intersperse " - " ))
-                    , Maybe.map 
-                        (\ location -> text (String.join ", " (List.filterMap identity [ location.city, location.state, location.country ]))) 
+                    , Maybe.map
+                        (\ location -> text (String.join ", " (List.filterMap identity [ location.city, location.state, location.country ])))
                         workData.location
                     ] |> List.filterMap identity |> List.intersperse (br [] [])
                 )
@@ -207,13 +208,13 @@ socialNetworkIconClass networkName =
 
 socialNetworkItem : Profile -> Html.Html msg
 socialNetworkItem profile =
-    let 
+    let
         attributes = [ Maybe.map href profile.url ] |> List.filterMap identity
         children =
             (
                 [ Maybe.Just (text "")
-                , profile.network |> 
-                    Maybe.map (\ network -> i [ class <| socialNetworkIconClass <| network ] []) 
+                , profile.network |>
+                    Maybe.map (\ network -> i [ class <| socialNetworkIconClass <| network ] [])
                 ] |> List.filterMap identity
             )
     in a attributes children
@@ -238,21 +239,21 @@ footer resumeData =
                         , br []
                             []
                         ]) resumeData.email
-                    -- , Maybe.map (\ location -> p []
-                    --     [ t []
-                    --         [ text "Address" ]
-                    --     , br [] [] 
-                    --     , text location.address
-                    --     , br [] []
-                    --     , text <| List.intersperse ", " (List.filterMap identity <| [location.city, location.postalCode])
-                    --     , br [] []
-                    --     , text <|
-                    --         case Countries.fromCode location.countryCode of 
-                    --             Just country -> country.name
-                    --             Nothing -> location.countryCode
-                    --     , br []
-                    --         []
-                    --     ]) resumeData.location  
+                    , Maybe.map (\ location -> p []
+                        [ t []
+                            [ text "Address" ]
+                        , br [] []
+                        , text (Maybe.withDefault "" location.address)
+                        , br [] []
+                        , (text <| String.concat <| List.intersperse ", " (List.filterMap identity <| [location.city, location.postalCode]))
+                        , br [] []
+                        , text <|
+                            case Maybe.FlatMap.flatMap Countries.fromCode location.countryCode of
+                                Just country -> country.name
+                                Nothing -> Maybe.withDefault "" location.countryCode
+                        , br []
+                            []
+                        ]) resumeData.location
                     , Maybe.map (\ phone -> p []
                         [ t []
                             [ text "Phone" ]
@@ -278,7 +279,7 @@ footer resumeData =
 
 
 resume : ResumeData -> Html.Html msg
-resume resumeData = 
+resume resumeData =
     body []
         [ header resumeData
         , section [ id "about", name "about" ] []
