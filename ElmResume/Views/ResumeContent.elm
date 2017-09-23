@@ -49,7 +49,7 @@ aboutDiv resumeData =
                         [ a [ href "my-resume.pdf" ]
                             [ i [ class "icon-file" ]
                                 []
-                            , span []
+                            , sm []
                                 [ text "DOWNLOAD PDF" ]
                             ]
                         ]
