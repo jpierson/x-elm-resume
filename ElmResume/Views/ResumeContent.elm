@@ -7,6 +7,8 @@ import ElmResume.Views.Html.Knommon exposing (..)
 import Char exposing (..)
 import Countries exposing (fromCode)
 
+type alias ResumeData = JsonResume
+
 header : ResumeData -> Html.Html msg
 header resumeData =
     div
@@ -16,11 +18,14 @@ header resumeData =
         [ div [ class "container" ]
             [ div [ class "row centered" ]
                 [ div [ class "col-lg-12" ]
-                    [ h1 [] [ text resumeData.name ]
+                    [ h1 [] [ text <| Maybe.withDefault "" resumeData.name ]
                     , h3 []
-                        [ text <| resumeData.label ++ " | "
-                        , a [ href ("mailto:" ++ resumeData.email) ] [ text resumeData.email ]
-                        ]
+                        (List.intersperse (text " | ") 
+                            (List.filterMap 
+                                identity 
+                                [ Just <| text <| Maybe.withDefault "" resumeData.label
+                                , Maybe.map (\ email -> a [ href ("mailto:" ++ email) ] [ text email ]) resumeData.email
+                                ]))
                     ]
                 ]
             ]
@@ -37,7 +42,7 @@ aboutDiv resumeData =
                     ]
                 , div [ class "col-lg-6" ]
                     [ p []
-                        [ text resumeData.summary ]
+                        [ text <| Maybe.withDefault "" resumeData.summary ]
                     ]
                 , div [ class "col-lg-3" ]
                     [ p []
@@ -71,15 +76,15 @@ educationRow educationData isFirstRow =
         , div [ class "col-lg-6" ]
             [ p []
                 [ t []
-                    [ text educationData.achievement ]
+                    [ text <| Maybe.withDefault "" educationData.achievement ]
                 , br [] []
-                , text educationData.institution
+                , text <| Maybe.withDefault "" educationData.institution
                 ]
             ]
         , div [ class "col-lg-3" ]
             [ p []
                 [ sm []
-                    [ text educationData.endDate ]
+                    [ text <| Maybe.withDefault "" educationData.endDate ]
                 , br []
                     []
                 , imp []
@@ -111,24 +116,28 @@ workRow workData isFirstRow =
     , div [ class (if isFirstRow then "col-lg-6" else "col-lg-6 col-lg-offset-3") ]
         [ p [ class "tight" ]
             [ t []
-                [ text workData.position ]
+                (List.filterMap identity [ Maybe.map text workData.position ])
             , br [] []
-            , text workData.name
+            , text <| Maybe.withDefault "" workData.name
             , br []
                 []
             ]
         , p []
             [ more []
-                [ text workData.summary ]
+                [ text <| Maybe.withDefault "" workData.summary ]
             ]
         ]
     , div [ class "col-lg-3" ]
         [ p []
-            [ sm []
-                [ text <| workData.startDate ++ " - " ++ workData.endDate
-                    , br [] []
-                    , text (String.join ", " (List.filterMap identity [ Just workData.location.city, workData.location.state, Just workData.location.country ]))
-                ]
+            [ sm [] 
+                (
+                    [ Maybe.Just ( text "")
+                    -- [ Maybe.Just ( text ( [ workData.startDate, workData.endDate ] |> List.filterMap identity |> List.intersperse " - " ))
+                    , Maybe.map 
+                        (\ location -> text (String.join ", " (List.filterMap identity [ location.city, location.state, location.country ]))) 
+                        workData.location
+                    ] |> List.filterMap identity |> List.intersperse (br [] [])
+                )
             ]
         ]
     ]
@@ -198,10 +207,16 @@ socialNetworkIconClass networkName =
 
 socialNetworkItem : Profile -> Html.Html msg
 socialNetworkItem profile =
-    a [ href profile.url ]
-        [ i [ class <| socialNetworkIconClass <| profile.network ]
-            []
-        ]
+    let 
+        attributes = [ Maybe.map href profile.url ] |> List.filterMap identity
+        children =
+            (
+                [ Maybe.Just (text "")
+                , profile.network |> 
+                    Maybe.map (\ network -> i [ class <| socialNetworkIconClass <| network ] []) 
+                ] |> List.filterMap identity
+            )
+    in a attributes children
 
 footer : ResumeData -> Html.Html msg
 footer resumeData =
@@ -213,42 +228,42 @@ footer resumeData =
                         [ text "CONTACT" ]
                     ]
                 , div [ class "col-lg-6" ]
-                    [ p []
+                    ([ Maybe.map (\ email -> p []
                         [ t []
                             [ text "Email" ]
                         , br []
                             []
-                        , a [ href ("mailto:" ++ resumeData.email), class "mail" ]
-                            [ text resumeData.email ]
+                        , a [ href ("mailto:" ++ email), class "mail" ]
+                            [ text email ]
                         , br []
                             []
-                        ]
-                    , p []
-                        [ t []
-                            [ text "Address" ]
-                        , br [] [] 
-                        , text resumeData.location.address
-                        , br [] []
-                        , text (resumeData.location.city ++ ", " ++ resumeData.location.postalCode)
-                        , br [] []
-                        , text <|
-                            case Countries.fromCode resumeData.location.countryCode of 
-                                Just country -> country.name
-                                Nothing -> resumeData.location.countryCode
-                        , br []
-                            []
-                        ]
-                    , p []
+                        ]) resumeData.email
+                    -- , Maybe.map (\ location -> p []
+                    --     [ t []
+                    --         [ text "Address" ]
+                    --     , br [] [] 
+                    --     , text location.address
+                    --     , br [] []
+                    --     , text <| List.intersperse ", " (List.filterMap identity <| [location.city, location.postalCode])
+                    --     , br [] []
+                    --     , text <|
+                    --         case Countries.fromCode location.countryCode of 
+                    --             Just country -> country.name
+                    --             Nothing -> location.countryCode
+                    --     , br []
+                    --         []
+                    --     ]) resumeData.location  
+                    , Maybe.map (\ phone -> p []
                         [ t []
                             [ text "Phone" ]
                         , br []
                             []
-                        , a [ href ("tel:" ++ (toString (String.filter (\c -> Char.isDigit c) resumeData.phone))), class "tel" ]
-                            [ text resumeData.phone ]
+                        , a [ href ("tel:" ++ (toString (String.filter (\c -> Char.isDigit c) phone))), class "tel" ]
+                            [ text phone ]
                         , br []
                             []
-                        ]
-                    ]
+                        ]) resumeData.phone
+                    ] |> List.filterMap identity)
                 , div [ class "col-lg-3" ]
                     [ p []
                         [ sm []
