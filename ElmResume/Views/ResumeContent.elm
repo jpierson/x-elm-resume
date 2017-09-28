@@ -198,12 +198,12 @@ awardsDiv resumeData =
             ]
         , br []
             []
-        ]
+        ]   
 
 socialNetworkIconClass : String -> String
 socialNetworkIconClass networkName =
     case String.toLower networkName of
-    "twitter" -> "icon-twitter"
+    -- "twitter" -> "icon-twitter"
     s -> "icon-" ++ s
 
 socialNetworkItem : Profile -> Html.Html msg
@@ -271,7 +271,7 @@ footer resumeData =
                             [ text "SOCIAL LINKS" ]
                         ]
                     , p []
-                        (List.map (\p -> socialNetworkItem p) resumeData.profiles)
+                        (List.map socialNetworkItem resumeData.profiles)
                     ]
                 ]
             ]
