@@ -1,7 +1,7 @@
 module ElmResume.JsonResumeDecoder exposing (..)
 import ElmResume.ResumeData exposing (..)
 import Json.Decode exposing (Decoder, int, string, list, maybe, map)
-import Json.Decode.Pipeline exposing (decode, required, optional, optionalAt)
+import Json.Decode.Pipeline exposing (decode, required, optional, optionalAt, resolve)
 
 justString : Decoder (Maybe String)
 justString = Json.Decode.map Just string
@@ -58,7 +58,7 @@ jsonResumeDecoder =
     |> optionalAt ["basics", "phone"] justString Nothing
     |> optionalAt ["basics", "label"]  justString Nothing
     |> optionalAt ["basics", "summary"]  justString Nothing
-    |> optional "location" (Json.Decode.map Just jsonResumeLocationDecoder) Nothing
-    |> optional "profiles" (list jsonResumeProfileDecoder) []
+    |> optionalAt ["basics", "location"] (Json.Decode.map Just jsonResumeLocationDecoder) Nothing
+    |> optionalAt ["basics", "profiles"] (list jsonResumeProfileDecoder) []
     |> optional "education" (list educationDecoder) []
     |> optional "work" (list workDecoder) []
