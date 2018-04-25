@@ -1,6 +1,6 @@
 # Elm Resume
 
-A resume based off of Robert Cobb's tutorial [Make A Resume Website From Scratch](https://medium.com/@robcobbable/make-a-resume-website-from-scratch-991845147ec) in [Elm](http://elm-lang.org/). This code was created as an example to motivate me to work through learning basic concepts in [Elm](http://elm-lang.org/) and was not meant to serve as an example of how to use Elm in a production application. My hope is that this exloration will be achievable learning experience and perhaps some of these pieces can be resused as basic static resume site generator or a package for working with resume data in Elm.
+A resume based off of Robert Cobb's tutorial [Make A Resume Website From Scratch](https://medium.com/@robcobbable/make-a-resume-website-from-scratch-991845147ec) in [Elm](http://elm-lang.org/). This code was created as an example to motivate me to work through learning basic concepts in [Elm](http://elm-lang.org/) and was not meant to serve as an example of how to use Elm in a production application. My hope is that this exploration will be achievable learning experience and perhaps some of these pieces can be reused as basic static resume site generator or a package for working with resume data in Elm.
 
 # Getting started
 
